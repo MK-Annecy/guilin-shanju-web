@@ -1,0 +1,10 @@
+# Cloudflare Pages config for 归林山居
+# 此文件在直接 wrangler 部署时使用；通过 Git 集成部署时 Cloudflare Dashboard 会自动识别 Next.js
+
+name = "guilin-shanju-web"
+compatibility_date = "2026-06-01"
+pages_build_output_dir = ".vercel/output/static"
+
+# 环境变量（也可在 Cloudflare Dashboard → Settings → Environment variables 设置）
+# [vars]
+# NEXT_PUBLIC_SITE_URL = "https://guilinshanju.com"

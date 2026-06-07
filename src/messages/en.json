@@ -1,0 +1,190 @@
+{
+  "brand": {
+    "name": "Gui Lin Shan Ju",
+    "nameLatin": "归林山居",
+    "tagline": "Return to the Forest",
+    "taglineEn": "A mountain sanctuary in the clouds of Pu'er"
+  },
+  "nav": {
+    "home": "Home",
+    "rooms": "Rooms",
+    "experiences": "Experiences",
+    "gallery": "Gallery",
+    "about": "About",
+    "contact": "Contact",
+    "book": "Book Now"
+  },
+  "home": {
+    "heroEyebrow": "A Mountain Sanctuary",
+    "heroTitle": "Return to the forest.\nReturn to yourself.",
+    "heroSubtitle": "Tucked into the cloud forests of Pu'er, Yunnan, a mountain home designed for stillness.",
+    "heroCta": "Explore Rooms",
+    "heroCtaSecondary": "See Experiences",
+    "introEyebrow": "About Gui Lin",
+    "introTitle": "A place to slow down.",
+    "introBody": "Set among the ancient tea mountains of Pu'er, Gui Lin Shan Ju is three small lodges with six rooms, built on the philosophy of living with the forest. No televisions. No noise. Just wind, birdsong, and a cup of warm pu'er.",
+    "stats": {
+      "altitude": "Altitude",
+      "altitudeValue": "1,580m",
+      "rooms": "Rooms",
+      "roomsValue": "6 keys",
+      "acreage": "Grounds",
+      "acreageValue": "32 mu",
+      "yearOpened": "Founded",
+      "yearOpenedValue": "2024"
+    },
+    "roomsEyebrow": "Where You Sleep",
+    "roomsTitle": "Three lodges.\nEvery room a view.",
+    "roomsSubtitle": "Built with local timber and handwoven textiles, floor-to-ceiling windows bring the forest indoors.",
+    "viewAllRooms": "View All Rooms",
+    "experiencesEyebrow": "Mountain Experiences",
+    "experiencesTitle": "In nature,\nfind your breath.",
+    "experiencesSubtitle": "Morning meditation, afternoon tea ceremony, evening stargazing — a full day of returning.",
+    "viewAllExperiences": "View All Experiences",
+    "testimonialEyebrow": "Words from Guests",
+    "testimonialTitle": "\"Here, time slows down.\"",
+    "ctaTitle": "Ready to return?",
+    "ctaSubtitle": "We host only six rooms. Book 14 days ahead to secure your mountain time."
+  },
+  "rooms": {
+    "title": "Rooms",
+    "subtitle": "Six rooms across three lodges, each with its own forest view.",
+    "fromPrice": "From",
+    "perNight": "/night",
+    "viewDetail": "View Room",
+    "bookNow": "Book Now",
+    "amenities": "Amenities",
+    "details": {
+      "suite": {
+        "name": "Mountain View Suite",
+        "shortDesc": "270° glass wall, wake to sea of clouds",
+        "longDesc": "On the second floor of the main lodge, the entire glass wall draws the valley's sea of clouds indoors. Private tea room, hinoki wood bathtub, skylight for stargazing from bed.",
+        "size": "65㎡",
+        "bed": "1.8m king",
+        "capacity": "2 guests",
+        "price": "¥1,280"
+      },
+      "double": {
+        "name": "Forest View King",
+        "shortDesc": "Private courtyard, birdsong mornings",
+        "longDesc": "Step out of your room into a private tea garden. Floor-to-ceiling glass faces a hundred-year-old tree; afternoon sun filters through leaves onto the bed.",
+        "size": "48㎡",
+        "bed": "1.5m queen",
+        "capacity": "2 guests",
+        "price": "¥880"
+      },
+      "twin": {
+        "name": "Forest Twin",
+        "shortDesc": "Warm, simple, close to nature",
+        "longDesc": "Two 1.2m single beds, ideal for friends traveling together or parent-child stays. Outside the window: a dense cedar forest, especially beautiful in the rain.",
+        "size": "42㎡",
+        "bed": "1.2m × 2",
+        "capacity": "2 guests",
+        "price": "¥780"
+      }
+    }
+  },
+  "experiences": {
+    "title": "Mountain Experiences",
+    "subtitle": "From morning to midnight, a complete day of returning to the forest.",
+    "meditation": {
+      "title": "Morning Meditation",
+      "desc": "On the main terrace facing the sea of clouds, 60 minutes of mindful breath with a teacher."
+    },
+    "tea": {
+      "title": "Ancient Tree Tea Ceremony",
+      "desc": "Afternoon visit to a thousand-year-old tea garden — pick, press, brew with a local tea master."
+    },
+    "forest": {
+      "title": "Forest Bathing",
+      "desc": "A 3km gentle walk through old-growth forest with a trained guide, awakening the five senses."
+    },
+    "stargazing": {
+      "title": "Stargazing at Night",
+      "desc": "1,580m altitude, zero light pollution. Hot drinks and wool blankets provided."
+    },
+    "mushroom": {
+      "title": "Wild Mushroom Foraging",
+      "desc": "June to September, the rainy season. Follow villagers into the hills for matsutake, termitomyces, porcini."
+    },
+    "workshop": {
+      "title": "Mountain Craft Workshop",
+      "desc": "Indigo dyeing, pottery, pressed flowers — bring the colors of the forest home with you."
+    }
+  },
+  "gallery": {
+    "title": "Gallery",
+    "subtitle": "Daily life at Gui Lin — mountain, cloud, light, people."
+  },
+  "about": {
+    "title": "About Gui Lin",
+    "subtitle": "A mountain home for the body and mind to restart.",
+    "story": {
+      "eyebrow": "Origin",
+      "title": "We wanted to build a place\nwhere you can do nothing at all.",
+      "body": "The founders of Gui Lin Shan Ju are three friends exhausted by the city. In 2021, they found this land in the deep mountains of Lancang County, Pu'er — 1,580m altitude, 92% forest coverage, the nearest village five kilometers away.\n\nOver three years, they designed and built the lodges with their own hands, using local timber, traditional rammed-earth techniques, and solar power. In spring 2024, Gui Lin opened its doors."
+    },
+    "values": {
+      "title": "Our Beliefs",
+      "items": [
+        { "title": "Living with the forest", "body": "No trees cut, no earth dug. Every structure follows the mountain's contours, preserving the original land." },
+        { "title": "Local is luxury", "body": "Ingredients from within 30km. Workers from nearby villages. Crafts inherited from ethnic minority traditions." },
+        { "title": "Slowness is the deepest hospitality", "body": "No check-in clock. No mini-bar pitches. No lobby announcements. Just you and the mountain." }
+      ]
+    }
+  },
+  "contact": {
+    "title": "Contact",
+    "subtitle": "We're here, listening to your plans to return.",
+    "address": "Address",
+    "addressValue": "Yunshan Forest, Huimin Town, Lancang County, Pu'er, Yunnan, China",
+    "phone": "Phone",
+    "phoneValue": "+86 TBD",
+    "wechat": "WeChat",
+    "wechatValue": "TBD",
+    "email": "Email",
+    "emailValue": "stay@guilinshanju.com",
+    "hours": "Hours",
+    "hoursValue": "Daily 9:00 - 21:00 (CST)"
+  },
+  "book": {
+    "title": "Book Your Stay",
+    "checkIn": "Check-in",
+    "checkOut": "Check-out",
+    "guests": "Guests",
+    "guest": "guests",
+    "name": "Name",
+    "namePlaceholder": "Your full name",
+    "phone": "Phone",
+    "phonePlaceholder": "Your phone number",
+    "email": "Email",
+    "emailPlaceholder": "Your email",
+    "remarks": "Notes",
+    "remarksPlaceholder": "Special requests, arrival time, etc.",
+    "submit": "Confirm Booking",
+    "submitting": "Submitting...",
+    "success": "Booking request sent! We'll confirm within 24 hours.",
+    "summary": "Booking Summary",
+    "nights": "nights",
+    "total": "Total",
+    "perNight": "/night",
+    "selectRoom": "Please select a room",
+    "selectDates": "Please select dates"
+  },
+  "footer": {
+    "rights": "All rights reserved",
+    "followUs": "Follow",
+    "explore": "Explore",
+    "contact": "Contact",
+    "legal": "Legal",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service"
+  },
+  "common": {
+    "language": "Language",
+    "chinese": "中文",
+    "english": "English",
+    "back": "Back",
+    "learnMore": "Learn More"
+  }
+}

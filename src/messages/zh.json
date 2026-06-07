@@ -1,0 +1,190 @@
+{
+  "brand": {
+    "name": "归林山居",
+    "nameLatin": "Gui Lin Shan Ju",
+    "tagline": "普洱深处，隐于山林",
+    "taglineEn": "Deep in Pu'er, hidden in the forest"
+  },
+  "nav": {
+    "home": "首页",
+    "rooms": "客房",
+    "experiences": "体验",
+    "gallery": "画廊",
+    "about": "关于",
+    "contact": "联系",
+    "book": "立即预订"
+  },
+  "home": {
+    "heroEyebrow": "禅意山居 · 疗愈之所",
+    "heroTitle": "归隐山林，\n重拾自己。",
+    "heroSubtitle": "在云南普洱的云雾深处，一处为你而生的山间居所。",
+    "heroCta": "探索客房",
+    "heroCtaSecondary": "查看体验",
+    "introEyebrow": "关于归林",
+    "introTitle": "一处让你放慢的地方",
+    "introBody": "归林山居坐落于云南普洱的万亩茶山之间，三栋独立院落，六间客房，遵循「与山林共生」的设计哲学。我们没有电视，没有喧嚣，只有风声、鸟鸣和一杯温热的古树茶。",
+    "stats": {
+      "altitude": "海拔",
+      "altitudeValue": "1,580m",
+      "rooms": "客房",
+      "roomsValue": "6 间",
+      "acreage": "占地",
+      "acreageValue": "32 亩",
+      "yearOpened": "始建",
+      "yearOpenedValue": "2024"
+    },
+    "roomsEyebrow": "下榻之所",
+    "roomsTitle": "三栋院落，\n每间都是风景。",
+    "roomsSubtitle": "所有客房均使用本地木材与手工织物，270° 落地窗将山林引入室内。",
+    "viewAllRooms": "查看全部房型",
+    "experiencesEyebrow": "山间体验",
+    "experiencesTitle": "在自然中，\n找回呼吸。",
+    "experiencesSubtitle": "清晨冥想、午后茶席、入夜观星——我们设计了完整的「归林」日程。",
+    "viewAllExperiences": "查看全部体验",
+    "testimonialEyebrow": "客人的话",
+    "testimonialTitle": "「在这里，\n时间慢了下来。」",
+    "ctaTitle": "准备好归林了吗？",
+    "ctaSubtitle": "我们仅接待 6 间客房。提前 14 天预订，确保你的山间时光。"
+  },
+  "rooms": {
+    "title": "客房",
+    "subtitle": "六间客房，三栋院落，每间都有独特的山林景致。",
+    "fromPrice": "起",
+    "perNight": "/晚",
+    "viewDetail": "查看详情",
+    "bookNow": "立即预订",
+    "amenities": "设施",
+    "details": {
+      "suite": {
+        "name": "山景套房",
+        "shortDesc": "270° 落地窗，晨起看云海",
+        "longDesc": "位于主楼二层，整面落地窗将山谷云海收进室内。独立茶室、原木浴缸、星空天窗。",
+        "size": "65㎡",
+        "bed": "1.8m 大床",
+        "capacity": "2 人",
+        "price": "¥1,280"
+      },
+      "double": {
+        "name": "林景大床房",
+        "shortDesc": "私享庭院，聆听鸟鸣",
+        "longDesc": "独立小院，推门即入私属茶园。落地玻璃对着一棵百年古树，午后阳光穿过枝叶洒在床上。",
+        "size": "48㎡",
+        "bed": "1.5m 大床",
+        "capacity": "2 人",
+        "price": "¥880"
+      },
+      "twin": {
+        "name": "森系双床房",
+        "shortDesc": "温馨简约，亲近自然",
+        "longDesc": "两张 1.2m 单床，适合朋友同行或亲子。窗外是密密的杉树林，下雨时尤其好听。",
+        "size": "42㎡",
+        "bed": "1.2m × 2",
+        "capacity": "2 人",
+        "price": "¥780"
+      }
+    }
+  },
+  "experiences": {
+    "title": "山间体验",
+    "subtitle": "从清晨到深夜，我们为你准备了完整的归林日程。",
+    "meditation": {
+      "title": "晨间冥想",
+      "desc": "在主屋露台，面朝云海，跟随老师做 60 分钟正念呼吸。"
+    },
+    "tea": {
+      "title": "古树茶席",
+      "desc": "午后前往万亩古茶园，跟随茶人体验采茶、压制、冲泡全过程。"
+    },
+    "forest": {
+      "title": "森林浴",
+      "desc": "由专业向导带领，3 公里缓步穿越原始森林，激活五感。"
+    },
+    "stargazing": {
+      "title": "入夜观星",
+      "desc": "1,580m 海拔，无光污染，每晚都有繁星。提供热饮与毛毯。"
+    },
+    "mushroom": {
+      "title": "菌菇采摘",
+      "desc": "6-9 月雨季，跟随村民进山，寻找松茸、鸡枞、牛肝菌。"
+    },
+    "workshop": {
+      "title": "手作工坊",
+      "desc": "扎染、陶艺、压花——把山里的颜色带回家。"
+    }
+  },
+  "gallery": {
+    "title": "画廊",
+    "subtitle": "归林的日常——山、云、光、人。"
+  },
+  "about": {
+    "title": "关于归林",
+    "subtitle": "一处为身心重启而生的山间居所。",
+    "story": {
+      "eyebrow": "缘起",
+      "title": "我们想造一个\n「可以什么都不做」的地方。",
+      "body": "归林山居的发起人是三位厌倦了城市的朋友。2021 年，他们在普洱市澜沧县的深山中找到了这片土地——海拔 1,580 米，森林覆盖率达 92%，最近的村庄在 5 公里外。\n\n三年时间，他们亲手参与设计与建造，坚持使用本地木材、传统夯土工艺和太阳能供电。2024 年春天，归林正式开业。"
+    },
+    "values": {
+      "title": "我们的信条",
+      "items": [
+        { "title": "与山林共生", "body": "不砍一棵树，不挖一寸土。所有建筑依山势而建，最大程度保留原始地貌。" },
+        { "title": "在地即奢侈", "body": "食材来自周边 30 公里，工人来自附近村庄，技艺传承自少数民族传统。" },
+        { "title": "慢，是最深的款待", "body": "没有 check-in 时钟，没有 mini bar 推销，没有大堂广播——只有你与山。" }
+      ]
+    }
+  },
+  "contact": {
+    "title": "联系我们",
+    "subtitle": "我们在这里，倾听你的归林计划。",
+    "address": "地址",
+    "addressValue": "云南省普洱市澜沧县惠民镇云山林场",
+    "phone": "电话",
+    "phoneValue": "+86 待补充",
+    "wechat": "微信",
+    "wechatValue": "待补充",
+    "email": "邮箱",
+    "emailValue": "stay@guilinshanju.com",
+    "hours": "咨询时间",
+    "hoursValue": "每日 9:00 - 21:00"
+  },
+  "book": {
+    "title": "预订",
+    "checkIn": "入住",
+    "checkOut": "退房",
+    "guests": "人数",
+    "guest": "人",
+    "name": "姓名",
+    "namePlaceholder": "请输入您的姓名",
+    "phone": "手机号",
+    "phonePlaceholder": "请输入手机号",
+    "email": "邮箱",
+    "emailPlaceholder": "请输入邮箱",
+    "remarks": "备注",
+    "remarksPlaceholder": "特殊需求、到达时间等",
+    "submit": "确认预订",
+    "submitting": "提交中...",
+    "success": "预订请求已发送！我们将在 24 小时内与您联系确认。",
+    "summary": "预订详情",
+    "nights": "晚",
+    "total": "总价",
+    "perNight": "/晚",
+    "selectRoom": "请选择房型",
+    "selectDates": "请选择日期"
+  },
+  "footer": {
+    "rights": "版权所有",
+    "followUs": "关注我们",
+    "explore": "探索",
+    "contact": "联系",
+    "legal": "条款",
+    "privacy": "隐私政策",
+    "terms": "服务条款"
+  },
+  "common": {
+    "language": "语言",
+    "chinese": "中文",
+    "english": "English",
+    "back": "返回",
+    "learnMore": "了解更多"
+  }
+}

@@ -1,0 +1,107 @@
+@import "tailwindcss";
+
+:root {
+  /* 归林山居 品牌色 */
+  --moss: #5C7A5C;          /* 苔藓绿 - primary */
+  --moss-dark: #3F5640;     /* 深苔藓 */
+  --moss-light: #8FA88F;    /* 浅苔藓 */
+  --wood: #8B6F47;          /* 暖木棕 - secondary */
+  --wood-light: #B89B7A;    /* 浅木 */
+  --cloud: #F5F5F0;         /* 云雾白 - background */
+  --cloud-dark: #E8EDE8;    /* 浅绿背景 */
+  --ink: #1F1F1F;           /* 主文字 */
+  --ink-soft: #4A4A4A;      /* 次要文字 */
+  --ink-mute: #7A7A7A;      /* 弱化文字 */
+  --line: #D9D9D2;          /* 分割线 */
+  --accent: #E8DED5;        /* 点缀色 */
+
+  --background: var(--cloud);
+  --foreground: var(--ink);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-moss: var(--moss);
+  --color-moss-dark: var(--moss-dark);
+  --color-moss-light: var(--moss-light);
+  --color-wood: var(--wood);
+  --color-wood-light: var(--wood-light);
+  --color-cloud: var(--cloud);
+  --color-cloud-dark: var(--cloud-dark);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-ink-mute: var(--ink-mute);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --font-serif: var(--font-noto-serif);
+  --font-sans: var(--font-noto-sans);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), system-ui, -apple-system, "Segoe UI", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: "kern" 1;
+}
+
+.font-serif {
+  font-family: var(--font-serif), Georgia, "Times New Roman", serif;
+}
+
+/* 链接默认无下划线，hover 时浮现 */
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* 选区颜色 */
+::selection {
+  background: var(--moss-light);
+  color: var(--ink);
+}
+
+/* 滚动条美化 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--cloud);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--moss-light);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--moss);
+}
+
+/* 图片默认行为 */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* 通用动效 */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in-up {
+  animation: fadeInUp 0.8s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.animate-fade-in {
+  animation: fadeIn 1.2s ease-out forwards;
+}

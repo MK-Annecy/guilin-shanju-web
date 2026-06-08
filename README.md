@@ -84,7 +84,7 @@ src/
 
 ### 自定义域名
 
-Pages 项目 → **Custom domains** → 添加 `guilinshanju.com`
+Pages 项目 → **Custom domains** → 添加 `forestretreat.cn`（`www.forestretreat.cn` 也建议加）
 
 ## 🔧 关键配置文件
 
@@ -103,5 +103,5 @@ Pages 项目 → **Custom domains** → 添加 `guilinshanju.com`
 
 ## 📞 联系
 
-- 邮箱：stay@guilinshanju.com
+- 邮箱：stay@forestretreat.cn
 - 地址：云南省普洱市澜沧县惠民镇云山林场

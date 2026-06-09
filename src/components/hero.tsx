@@ -69,7 +69,7 @@ export function Hero({
       {/* Scroll indicator */}
       <div className="absolute bottom-8 left-1/2 -translate-x-1/2 text-cloud/60 animate-fade-in">
         <div className="w-px h-12 bg-cloud/40 mx-auto mb-2" />
-        <span className="text-[10px] tracking-[0.3em] uppercase">Scroll</span>
+        <span className="text-xs tracking-[0.3em] uppercase">Scroll</span>
       </div>
     </section>
   );

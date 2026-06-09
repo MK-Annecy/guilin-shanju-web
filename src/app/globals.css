@@ -10,8 +10,8 @@
   --cloud: #F5F5F0;         /* 云雾白 - background */
   --cloud-dark: #E8EDE8;    /* 浅绿背景 */
   --ink: #1F1F1F;           /* 主文字 */
-  --ink-soft: #4A4A4A;      /* 次要文字 */
-  --ink-mute: #7A7A7A;      /* 弱化文字 */
+  --ink-soft: #3F3F3F;      /* 次要文字 - 提高对比 */
+  --ink-mute: #6A6A6A;      /* 弱化文字 - 提高对比 */
   --line: #D9D9D2;          /* 分割线 */
   --accent: #E8DED5;        /* 点缀色 */
 
@@ -36,6 +36,30 @@
   --color-accent: var(--accent);
   --font-serif: var(--font-noto-serif);
   --font-sans: var(--font-noto-sans);
+
+  /* 中老年友好的字号 scale（整体上调一档，对比原 Tailwind 默认） */
+  --text-xs: 0.875rem;          /* 14px (原 12px) */
+  --text-xs--line-height: 1.7;
+  --text-sm: 1rem;              /* 16px (原 14px) */
+  --text-sm--line-height: 1.7;
+  --text-base: 1.125rem;        /* 18px (原 16px) */
+  --text-base--line-height: 1.75;
+  --text-lg: 1.25rem;           /* 20px (原 18px) */
+  --text-lg--line-height: 1.7;
+  --text-xl: 1.5rem;            /* 24px (原 20px) */
+  --text-xl--line-height: 1.55;
+  --text-2xl: 1.75rem;          /* 28px (原 24px) */
+  --text-2xl--line-height: 1.45;
+  --text-3xl: 2.25rem;          /* 36px (原 30px) */
+  --text-3xl--line-height: 1.35;
+  --text-4xl: 2.75rem;          /* 44px (原 36px) */
+  --text-4xl--line-height: 1.25;
+  --text-5xl: 3.5rem;           /* 56px (原 48px) */
+  --text-5xl--line-height: 1.2;
+  --text-6xl: 4.25rem;          /* 68px (原 60px) */
+  --text-6xl--line-height: 1.15;
+  --text-7xl: 5rem;             /* 80px (原 72px) */
+  --text-7xl--line-height: 1.1;
 }
 
 html {
@@ -49,6 +73,10 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-feature-settings: "kern" 1;
+  /* 基础字号与行高 - 中老年友好 */
+  font-size: 18px;
+  line-height: 1.75;
+  letter-spacing: 0.01em;
 }
 
 .font-serif {

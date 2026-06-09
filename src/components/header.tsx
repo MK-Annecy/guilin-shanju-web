@@ -51,7 +51,7 @@ export function Header() {
           <span className="font-serif text-xl md:text-2xl font-medium tracking-wide text-ink">
             {tBrand('name')}
           </span>
-          <span className="text-[10px] md:text-xs tracking-[0.2em] uppercase text-ink-mute mt-1">
+          <span className="text-xs tracking-[0.2em] uppercase text-ink-mute mt-1">
             {tBrand('nameLatin')}
           </span>
         </Link>

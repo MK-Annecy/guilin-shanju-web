@@ -7,7 +7,11 @@ const intlMiddleware = createMiddleware(routing);
 /**
  * 根据 Accept-Language header 推断语言。
  * 优先级：用户 cookie 手动选择 > 浏览器语言 > 默认中文
- * 接受 zh / zh-CN / zh-TW / zh-HK / en / en-US / en-GB 等
+ * 接受 zh / zh-CN / zh-TW / zh-HK / zh-Hans / zh-Hant / en / en-US 等
+ *
+ * 业务策略：归林山居主体在中国。
+ *  - 中文（含所有变体）→ /zh
+ *  - 其他语言（en / ja / fr / ko / 未设置 等）→ /en
  */
 function detectLocale(request: NextRequest): 'zh' | 'en' {
   const cookieLocale = request.cookies.get('NEXT_LOCALE')?.value;
@@ -16,11 +20,18 @@ function detectLocale(request: NextRequest): 'zh' | 'en' {
   }
 
   const acceptLanguage = request.headers.get('accept-language') || '';
-  // 仅在明确英语时返回 en；其他（含中文/未设置）一律 zh
-  if (/(?:^|,)\s*en(?:[-;]|\b)/i.test(acceptLanguage)) {
-    return 'en';
+  // 拆出每个语言 token（去 q 值与空白）
+  const tokens = acceptLanguage
+    .split(',')
+    .map((t) => t.split(';')[0].trim().toLowerCase());
+
+  // 任一 token 以 zh 开头 → 中文
+  for (const tag of tokens) {
+    if (tag === 'zh' || tag.startsWith('zh-')) {
+      return 'zh';
+    }
   }
-  return 'zh';
+  return 'en';
 }
 
 export default function middleware(request: NextRequest) {

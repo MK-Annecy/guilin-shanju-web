@@ -1,11 +1,19 @@
 {
   "name": "guilin-shanju-web",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
+    "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
+    "upload": "opennextjs-cloudflare build && opennextjs-cloudflare upload",
+    "cf-typegen": "wrangler types --env-interface CloudflareEnv",
+    "db:migrate:local": "wrangler d1 migrations apply guilin-shanju-bookings --local",
+    "db:migrate:remote": "wrangler d1 migrations apply guilin-shanju-bookings --remote",
+    "db:console:local": "wrangler d1 execute guilin-shanju-bookings --local --command \"SELECT * FROM bookings ORDER BY id DESC LIMIT 20\"",
+    "db:console:remote": "wrangler d1 execute guilin-shanju-bookings --remote --command \"SELECT * FROM bookings ORDER BY id DESC LIMIT 20\""
   },
   "dependencies": {
     "class-variance-authority": "^0.7.1",
@@ -18,11 +26,14 @@
     "tailwind-merge": "^3.6.0"
   },
   "devDependencies": {
+    "@cloudflare/workers-types": "^4.20260613.1",
+    "@opennextjs/cloudflare": "^1.19.11",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "wrangler": "^4.86.0"
   }
 }

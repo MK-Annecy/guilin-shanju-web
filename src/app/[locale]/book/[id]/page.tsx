@@ -1,26 +1,29 @@
 'use client';
 
-import { useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useState, useTransition } from 'react';
+import { useParams } from 'next/navigation';
 import { useTranslations, useLocale } from 'next-intl';
 import { Link } from '@/i18n/routing';
-import { ArrowLeft, Check } from 'lucide-react';
+import { ArrowLeft, Check, AlertCircle } from 'lucide-react';
+import { submitBookingWithFallback, type BookResult } from '@/app/actions/book';
+import { ROOMS, type RoomId, isRoomId, computeNights } from '@/lib/booking';
 
-const roomData = {
-  suite: { image: 'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?q=80&w=1200' },
-  double: { image: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?q=80&w=1200' },
-  twin: { image: 'https://images.unsplash.com/photo-1566665797739-1674de7a421a?q=80&w=1200' },
+const roomImages: Record<RoomId, string> = {
+  suite: 'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?q=80&w=1200',
+  double: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?q=80&w=1200',
+  twin: 'https://images.unsplash.com/photo-1566665797739-1674de7a421a?q=80&w=1200',
 };
 
 export default function BookPage() {
   const params = useParams();
-  const router = useRouter();
   const locale = useLocale();
   const t = useTranslations('book');
   const tRooms = useTranslations('rooms');
+  const [, startTransition] = useTransition();
 
-  const id = params.id as keyof typeof roomData;
-  const room = roomData[id] || roomData.double;
+  const idParam = params.id as string;
+  const roomId: RoomId = isRoomId(idParam) ? idParam : 'double';
+  const room = ROOMS[roomId];
 
   const today = new Date().toISOString().split('T')[0];
   const tomorrow = new Date(Date.now() + 86400000).toISOString().split('T')[0];
@@ -35,31 +38,34 @@ export default function BookPage() {
     remarks: '',
   });
   const [submitting, setSubmitting] = useState(false);
-  const [done, setDone] = useState(false);
+  const [result, setResult] = useState<BookResult | null>(null);
 
-  const nights =
-    Math.max(
-      1,
-      Math.ceil(
-        (new Date(form.checkOut).getTime() - new Date(form.checkIn).getTime()) /
-          86400000
-      )
-    ) || 1;
+  const nights = Math.max(1, computeNights(form.checkIn, form.checkOut) || 1);
+  const total = room.pricePerNight * nights * form.guests;
 
-  // Simple price calc
-  const pricePerNight = id === 'suite' ? 1280 : id === 'double' ? 880 : 780;
-  const total = nights * pricePerNight * form.guests;
-
-  const submit = async (e: React.FormEvent) => {
+  const submit = (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
-    // TODO: integrate with Supabase / API
-    await new Promise((r) => setTimeout(r, 1200));
-    setSubmitting(false);
-    setDone(true);
+    setResult(null);
+
+    startTransition(async () => {
+      const r = await submitBookingWithFallback({
+        roomId,
+        checkIn: form.checkIn,
+        checkOut: form.checkOut,
+        guests: form.guests,
+        name: form.name,
+        phone: form.phone,
+        email: form.email,
+        remarks: form.remarks,
+        locale: locale === 'zh' ? 'zh' : 'en',
+      });
+      setResult(r);
+      setSubmitting(false);
+    });
   };
 
-  if (done) {
+  if (result?.ok) {
     return (
       <section className="min-h-[80vh] flex items-center justify-center px-6">
         <div className="max-w-md text-center">
@@ -67,14 +73,23 @@ export default function BookPage() {
             <Check className="w-8 h-8 text-moss" />
           </div>
           <h1 className="font-serif text-3xl text-ink mb-4">
-            {locale === 'zh' ? '收到！' : 'Thank you!'}
+            {t('successTitle')}
           </h1>
           <p className="text-ink-soft leading-relaxed">{t('success')}</p>
+          <div className="mt-6 inline-block bg-cloud-dark border border-line px-6 py-3">
+            <div className="text-xs tracking-[0.2em] uppercase text-ink-mute mb-1">
+              {t('bookingRef')}
+            </div>
+            <div className="font-mono text-lg text-ink select-all">
+              {result.bookingRef}
+            </div>
+          </div>
+          <p className="text-xs text-ink-mute mt-4">{t('saveRef')}</p>
           <Link
             href="/"
             className="inline-block mt-8 text-sm text-moss hover:text-moss-dark border-b border-moss pb-0.5"
           >
-            ← {locale === 'zh' ? '返回首页' : 'Back home'}
+            ← {t('backHome')}
           </Link>
         </div>
       </section>
@@ -85,16 +100,28 @@ export default function BookPage() {
     <section className="pt-28 md:pt-36 pb-20 px-6 md:px-10">
       <div className="max-w-5xl mx-auto">
         <Link
-          href={`/rooms/${id}` as any}
+          href={`/rooms/${roomId}` as any}
           className="inline-flex items-center gap-2 text-sm text-ink-mute hover:text-moss mb-8"
         >
           <ArrowLeft className="w-4 h-4" />
-          {tRooms(`details.${id}.name`)}
+          {tRooms(`details.${roomId}.name`)}
         </Link>
 
         <h1 className="font-serif text-4xl md:text-5xl font-light text-ink mb-12">
           {t('title')}
         </h1>
+
+        {result && !result.ok && (
+          <div className="mb-6 p-4 border border-red-200 bg-red-50 flex gap-3 items-start">
+            <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
+            <div>
+              <div className="text-sm font-medium text-red-900">
+                {t('errorTitle')}
+              </div>
+              <div className="text-sm text-red-700 mt-1">{result.error}</div>
+            </div>
+          </div>
+        )}
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
           {/* Form */}
@@ -107,6 +134,7 @@ export default function BookPage() {
                 <input
                   type="date"
                   required
+                  min={today}
                   value={form.checkIn}
                   onChange={(e) => setForm({ ...form, checkIn: e.target.value })}
                   className="w-full px-4 py-3 bg-cloud-dark border border-line focus:border-moss focus:outline-none"
@@ -119,6 +147,7 @@ export default function BookPage() {
                 <input
                   type="date"
                   required
+                  min={form.checkIn || today}
                   value={form.checkOut}
                   onChange={(e) => setForm({ ...form, checkOut: e.target.value })}
                   className="w-full px-4 py-3 bg-cloud-dark border border-line focus:border-moss focus:outline-none"
@@ -149,6 +178,7 @@ export default function BookPage() {
               <input
                 type="text"
                 required
+                maxLength={60}
                 value={form.name}
                 onChange={(e) => setForm({ ...form, name: e.target.value })}
                 placeholder={t('namePlaceholder')}
@@ -215,10 +245,10 @@ export default function BookPage() {
               </div>
               <div
                 className="aspect-[4/3] bg-cover bg-center mb-4"
-                style={{ backgroundImage: `url(${room.image})` }}
+                style={{ backgroundImage: `url(${roomImages[roomId]})` }}
               />
               <div className="font-serif text-xl text-ink">
-                {tRooms(`details.${id}.name`)}
+                {tRooms(`details.${roomId}.name`)}
               </div>
               <div className="mt-4 space-y-2 text-sm text-ink-soft">
                 <div className="flex justify-between">
@@ -232,7 +262,7 @@ export default function BookPage() {
                 <div className="flex justify-between">
                   <span>{nights} {t('nights')}</span>
                   <span className="text-ink">
-                    ¥{pricePerNight.toLocaleString()} {t('perNight')}
+                    ¥{room.pricePerNight.toLocaleString()} {t('perNight')}
                   </span>
                 </div>
                 <div className="flex justify-between">

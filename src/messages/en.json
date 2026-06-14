@@ -163,13 +163,18 @@
     "remarksPlaceholder": "Special requests, arrival time, etc.",
     "submit": "Confirm Booking",
     "submitting": "Submitting...",
-    "success": "Booking request sent! We'll confirm within 24 hours.",
     "summary": "Booking Summary",
     "nights": "nights",
     "total": "Total",
     "perNight": "/night",
     "selectRoom": "Please select a room",
-    "selectDates": "Please select dates"
+    "selectDates": "Please select dates",
+    "successTitle": "Booking received!",
+    "success": "We'll confirm via phone or email within 24 hours.",
+    "bookingRef": "Booking Reference",
+    "saveRef": "Please save this reference for follow-up.",
+    "backHome": "Back to home",
+    "errorTitle": "Booking failed"
   },
   "footer": {
     "rights": "All rights reserved",

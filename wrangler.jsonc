@@ -1,0 +1,27 @@
+// Cloudflare Workers + D1 configuration
+// Docs: https://developers.cloudflare.com/workers/wrangler/configuration/
+// D1 binding: in `d1_databases`, the `binding` name is what code uses (env.DB)
+
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "guilin-shanju-web",
+  "main": ".open-next/worker.js",
+  "compatibility_date": "2026-05-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS"
+  },
+  "observability": {
+    "enabled": true
+  },
+  "placement": { "mode": "smart" },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "guilin-shanju-bookings",
+      "database_id": "REPLACE_WITH_REAL_D1_ID_AFTER_wrangler_d1_create",
+      "migrations_dir": "migrations"
+    }
+  ]
+}

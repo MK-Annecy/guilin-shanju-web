@@ -163,13 +163,18 @@
     "remarksPlaceholder": "特殊需求、到达时间等",
     "submit": "确认预订",
     "submitting": "提交中...",
-    "success": "预订请求已发送！我们将在 24 小时内与您联系确认。",
     "summary": "预订详情",
     "nights": "晚",
     "total": "总价",
     "perNight": "/晚",
     "selectRoom": "请选择房型",
-    "selectDates": "请选择日期"
+    "selectDates": "请选择日期",
+    "successTitle": "预订请求已收到！",
+    "success": "我们将在 24 小时内通过电话或邮件与您联系确认。",
+    "bookingRef": "预订编号",
+    "saveRef": "请保存此编号以便后续查询。",
+    "backHome": "返回首页",
+    "errorTitle": "预订失败"
   },
   "footer": {
     "rights": "版权所有",

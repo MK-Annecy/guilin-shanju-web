@@ -5,6 +5,7 @@ import { headers } from 'next/headers';
 import { getCloudflareContext } from '@opennextjs/cloudflare';
 import { getD1 } from '@/lib/d1';
 import { verifyTurnstileToken } from '@/lib/turnstile';
+import { sendBookingConfirmation } from '@/lib/email';
 import {
   ROOMS,
   type RoomId,
@@ -194,7 +195,24 @@ export async function submitBooking(input: BookInput): Promise<BookResult> {
         // ignore
       }
 
-      if (res.success) return { ok: true, bookingRef: ref, totalCny, nights };
+      if (res.success) {
+        // Fire-and-forget: send confirmation email (failures don't block the booking)
+        void sendConfirmationEmail({
+          bookingRef: ref,
+          roomId,
+          checkIn: input.checkIn,
+          checkOut: input.checkOut,
+          nights,
+          guests: input.guests,
+          pricePerNight: room.pricePerNight,
+          totalCny,
+          guestName: input.name.trim(),
+          guestEmail: input.email.trim(),
+          remarks: input.remarks,
+          locale: input.locale,
+        });
+        return { ok: true, bookingRef: ref, totalCny, nights };
+      }
       ref = generateBookingRef();
       attempt++;
     }
@@ -202,6 +220,66 @@ export async function submitBooking(input: BookInput): Promise<BookResult> {
   } catch (err) {
     console.error('submitBooking failed:', err);
     return { ok: false, error: 'Booking failed. Please try again or contact us directly.' };
+  }
+}
+
+/**
+ * Fire-and-forget email sender. Reads RESEND_API_KEY + NOTIFY_EMAIL
+ * from Cloudflare env. If missing, logs and returns silently.
+ */
+async function sendConfirmationEmail(details: {
+  bookingRef: string;
+  roomId: RoomId;
+  checkIn: string;
+  checkOut: string;
+  nights: number;
+  guests: number;
+  pricePerNight: number;
+  totalCny: number;
+  guestName: string;
+  guestEmail: string;
+  remarks?: string;
+  locale: 'zh' | 'en';
+}): Promise<void> {
+  let apiKey: string | undefined;
+  let fromAddress: string | undefined;
+  let hotelInbox: string | undefined;
+  try {
+    const { env } = await getCloudflareContext({ async: true });
+    apiKey = env.RESEND_API_KEY;
+    fromAddress = env.EMAIL_FROM;
+    hotelInbox = env.HOTEL_INBOX;
+  } catch {
+    // not in OpenNext runtime — skip
+  }
+  if (!apiKey || !fromAddress || !hotelInbox) {
+    console.warn('[email] skipped: RESEND_API_KEY / EMAIL_FROM / HOTEL_INBOX not set');
+    return;
+  }
+  const result = await sendBookingConfirmation(
+    {
+      bookingRef: details.bookingRef,
+      roomId: details.roomId,
+      roomName: details.roomId,
+      checkIn: details.checkIn,
+      checkOut: details.checkOut,
+      nights: details.nights,
+      guests: details.guests,
+      pricePerNight: details.pricePerNight,
+      totalCny: details.totalCny,
+      guestName: details.guestName,
+      guestEmail: details.guestEmail,
+      remarks: details.remarks,
+      locale: details.locale,
+    },
+    apiKey,
+    fromAddress,
+    hotelInbox,
+  );
+  if (!result.ok) {
+    console.error('[email] send failed:', result.error);
+  } else {
+    console.log('[email] sent:', result.id, 'for', details.bookingRef);
   }
 }
 

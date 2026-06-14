@@ -25,6 +25,8 @@
     }
   ],
   "vars": {
-    "TURNSTILE_SITE_KEY": "0x4AAAAAADkiRMbVH646fdR0"
+    "TURNSTILE_SITE_KEY": "0x4AAAAAADkiRMbVH646fdR0",
+    "EMAIL_FROM": "归林山居 <booking@forestretreat.cn>",
+    "HOTEL_INBOX": "service@forestretreat.cn"
   }
 }

@@ -20,7 +20,7 @@
     {
       "binding": "DB",
       "database_name": "guilin-shanju-bookings",
-      "database_id": "REPLACE_WITH_REAL_D1_ID_AFTER_wrangler_d1_create",
+      "database_id": "0be43913-178a-4161-8b91-0de36b51cb50",
       "migrations_dir": "migrations"
     }
   ]

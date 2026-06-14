@@ -174,7 +174,8 @@
     "bookingRef": "Booking Reference",
     "saveRef": "Please save this reference for follow-up.",
     "backHome": "Back to home",
-    "errorTitle": "Booking failed"
+    "errorTitle": "Booking failed",
+    "botCheckNote": "Please complete the security check below before submitting."
   },
   "footer": {
     "rights": "All rights reserved",

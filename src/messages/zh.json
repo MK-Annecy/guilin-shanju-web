@@ -174,7 +174,8 @@
     "bookingRef": "预订编号",
     "saveRef": "请保存此编号以便后续查询。",
     "backHome": "返回首页",
-    "errorTitle": "预订失败"
+    "errorTitle": "预订失败",
+    "botCheckNote": "提交前请完成下方安全验证。"
   },
   "footer": {
     "rights": "版权所有",

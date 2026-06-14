@@ -1,12 +1,13 @@
 'use client';
 
-import { useState, useTransition } from 'react';
+import { useState, useTransition, useRef, useMemo } from 'react';
 import { useParams } from 'next/navigation';
 import { useTranslations, useLocale } from 'next-intl';
 import { Link } from '@/i18n/routing';
-import { ArrowLeft, Check, AlertCircle } from 'lucide-react';
+import { ArrowLeft, Check, AlertCircle, Shield } from 'lucide-react';
 import { submitBookingWithFallback, type BookResult } from '@/app/actions/book';
 import { ROOMS, type RoomId, isRoomId, computeNights } from '@/lib/booking';
+import { Turnstile, type TurnstileHandle } from '@/components/turnstile';
 
 const roomImages: Record<RoomId, string> = {
   suite: 'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?q=80&w=1200',
@@ -39,6 +40,19 @@ export default function BookPage() {
   });
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<BookResult | null>(null);
+  const turnstileRef = useRef<TurnstileHandle>(null);
+  const turnstileTokenRef = useRef<string>('');
+
+  // Site key comes from a server-injected global (set in [locale]/layout.tsx),
+  // or the wrangler.jsonc var at build time. Falls back to empty (widget hidden).
+  const turnstileSiteKey = useMemo(() => {
+    if (typeof window === 'undefined') return '';
+    return (
+      (window as any).__TURNSTILE_SITE_KEY__ ||
+      process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ||
+      ''
+    );
+  }, []);
 
   const nights = Math.max(1, computeNights(form.checkIn, form.checkOut) || 1);
   const total = room.pricePerNight * nights * form.guests;
@@ -59,9 +73,14 @@ export default function BookPage() {
         email: form.email,
         remarks: form.remarks,
         locale: locale === 'zh' ? 'zh' : 'en',
+        turnstileToken: turnstileTokenRef.current,
       });
       setResult(r);
       setSubmitting(false);
+      // Reset Turnstile after a failed submit so the user can retry
+      if (!r.ok) {
+        turnstileRef.current?.reset();
+      }
     });
   };
 
@@ -227,6 +246,21 @@ export default function BookPage() {
                 className="w-full px-4 py-3 bg-cloud-dark border border-line focus:border-moss focus:outline-none resize-none"
               />
             </div>
+
+            {/* Turnstile bot check */}
+            {turnstileSiteKey ? (
+              <div className="pt-2">
+                <Turnstile
+                  ref={turnstileRef}
+                  siteKey={turnstileSiteKey}
+                  onTokenChange={(tok) => (turnstileTokenRef.current = tok)}
+                />
+                <p className="text-xs text-ink-mute mt-2 flex items-center gap-1.5">
+                  <Shield className="w-3 h-3" />
+                  {t('botCheckNote')}
+                </p>
+              </div>
+            ) : null}
 
             <button
               type="submit"

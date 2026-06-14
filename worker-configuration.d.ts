@@ -11,4 +11,8 @@ interface CloudflareEnv {
   NEXTJS_ENV?: string;
   /** Optional notification email (set in Cloudflare dashboard later) */
   NOTIFY_EMAIL?: string;
+  /** Turnstile public site key (set in wrangler.jsonc vars) */
+  TURNSTILE_SITE_KEY?: string;
+  /** Turnstile secret (set via `wrangler secret put TURNSTILE_SECRET_KEY` or Dashboard) */
+  TURNSTILE_SECRET_KEY?: string;
 }

@@ -1,7 +1,10 @@
 'use server';
 
 import { randomBytes } from 'node:crypto';
+import { headers } from 'next/headers';
+import { getCloudflareContext } from '@opennextjs/cloudflare';
 import { getD1 } from '@/lib/d1';
+import { verifyTurnstileToken } from '@/lib/turnstile';
 import {
   ROOMS,
   type RoomId,
@@ -24,6 +27,8 @@ export interface BookInput {
   email: string;
   remarks?: string;
   locale: 'zh' | 'en';
+  /** Cloudflare Turnstile token (required when TURNSTILE_SECRET_KEY is set) */
+  turnstileToken?: string;
 }
 
 /**
@@ -92,6 +97,33 @@ export async function submitBooking(input: BookInput): Promise<BookResult> {
   const v = validate(input);
   if (!v.ok) return { ok: false, error: v.error };
 
+  // ---- Turnstile verification (only if secret is configured) ----
+  let turnstileSecret: string | undefined;
+  try {
+    const { env } = await getCloudflareContext({ async: true });
+    turnstileSecret = env.TURNSTILE_SECRET_KEY;
+  } catch {
+    // ignore — fallback to "no Turnstile" path
+  }
+  if (turnstileSecret) {
+    let remoteIp: string | undefined;
+    try {
+      const h = await headers();
+      remoteIp = h.get('cf-connecting-ip') ?? undefined;
+    } catch {
+      // ignore
+    }
+    const verify = await verifyTurnstileToken(
+      input.turnstileToken ?? '',
+      turnstileSecret,
+      remoteIp,
+    );
+    if (!verify.success) {
+      const codes = verify['error-codes']?.join(',') ?? 'unknown';
+      return { ok: false, error: `Bot check failed (${codes}). Please retry.` };
+    }
+  }
+
   const roomId = input.roomId as RoomId;
   const room = ROOMS[roomId];
   const nights = computeNights(input.checkIn, input.checkOut);
@@ -123,8 +155,8 @@ export async function submitBooking(input: BookInput): Promise<BookResult> {
           `INSERT INTO bookings (
             booking_ref, room_id, room_name, check_in, check_out, nights, guests,
             price_per_night, total_cny, guest_name, guest_phone, guest_email,
-            remarks, status, locale
-          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?)`,
+            remarks, status, locale, ip_hash
+          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?, ?)`,
         )
         .bind(
           ref,
@@ -141,10 +173,28 @@ export async function submitBooking(input: BookInput): Promise<BookResult> {
           input.email.trim(),
           input.remarks?.trim() || null,
           input.locale,
+          null, // ip_hash — populated below if available
         )
         .run();
+
+      // Best-effort: write a hashed IP for spam analysis (no PII)
+      try {
+        const h = await headers();
+        const ip = h.get('cf-connecting-ip');
+        const ua = h.get('user-agent');
+        if (ip) {
+          const { createHash } = await import('node:crypto');
+          const hash = createHash('sha256').update(ip).digest('hex').slice(0, 32);
+          await db
+            .prepare('UPDATE bookings SET ip_hash = ?, user_agent = ? WHERE booking_ref = ?')
+            .bind(hash, ua?.slice(0, 500) ?? null, ref)
+            .run();
+        }
+      } catch {
+        // ignore
+      }
+
       if (res.success) return { ok: true, bookingRef: ref, totalCny, nights };
-      // Ref collision → regenerate and retry
       ref = generateBookingRef();
       attempt++;
     }

@@ -127,9 +127,18 @@
     "values": {
       "title": "Our Beliefs",
       "items": [
-        { "title": "Living with the forest", "body": "No trees cut, no earth dug. Every structure follows the mountain's contours, preserving the original land." },
-        { "title": "Local is luxury", "body": "Ingredients from within 30km. Workers from nearby villages. Crafts inherited from ethnic minority traditions." },
-        { "title": "Slowness is the deepest hospitality", "body": "No check-in clock. No mini-bar pitches. No lobby announcements. Just you and the mountain." }
+        {
+          "title": "Living with the forest",
+          "body": "No trees cut, no earth dug. Every structure follows the mountain's contours, preserving the original land."
+        },
+        {
+          "title": "Local is luxury",
+          "body": "Ingredients from within 30km. Workers from nearby villages. Crafts inherited from ethnic minority traditions."
+        },
+        {
+          "title": "Slowness is the deepest hospitality",
+          "body": "No check-in clock. No mini-bar pitches. No lobby announcements. Just you and the mountain."
+        }
       ]
     }
   },
@@ -157,6 +166,7 @@
     "namePlaceholder": "Your full name",
     "phone": "Phone",
     "phonePlaceholder": "Your phone number",
+    "phoneCountry": "Country code",
     "email": "Email",
     "emailPlaceholder": "Your email",
     "remarks": "Notes",
@@ -175,7 +185,17 @@
     "saveRef": "Please save this reference for follow-up.",
     "backHome": "Back to home",
     "errorTitle": "Booking failed",
-    "botCheckNote": "Please complete the security check below before submitting."
+    "botCheckNote": "Please complete the security check below before submitting.",
+    "datePicker": {
+      "placeholder": "Select check-in & check-out",
+      "selectCheckIn": "Select check-in date",
+      "selectCheckOut": "Select check-out date",
+      "apply": "Apply",
+      "clear": "Clear",
+      "cancel": "Cancel",
+      "flexExact": "Exact dates",
+      "flexDays": "± {n} days"
+    }
   },
   "footer": {
     "rights": "All rights reserved",

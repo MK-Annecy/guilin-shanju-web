@@ -127,9 +127,18 @@
     "values": {
       "title": "我们的信条",
       "items": [
-        { "title": "与山林共生", "body": "不砍一棵树，不挖一寸土。所有建筑依山势而建，最大程度保留原始地貌。" },
-        { "title": "在地即奢侈", "body": "食材来自周边 30 公里，工人来自附近村庄，技艺传承自少数民族传统。" },
-        { "title": "慢，是最深的款待", "body": "没有 check-in 时钟，没有 mini bar 推销，没有大堂广播——只有你与山。" }
+        {
+          "title": "与山林共生",
+          "body": "不砍一棵树，不挖一寸土。所有建筑依山势而建，最大程度保留原始地貌。"
+        },
+        {
+          "title": "在地即奢侈",
+          "body": "食材来自周边 30 公里，工人来自附近村庄，技艺传承自少数民族传统。"
+        },
+        {
+          "title": "慢，是最深的款待",
+          "body": "没有 check-in 时钟，没有 mini bar 推销，没有大堂广播——只有你与山。"
+        }
       ]
     }
   },
@@ -157,6 +166,7 @@
     "namePlaceholder": "请输入您的姓名",
     "phone": "手机号",
     "phonePlaceholder": "请输入手机号",
+    "phoneCountry": "国家代码",
     "email": "邮箱",
     "emailPlaceholder": "请输入邮箱",
     "remarks": "备注",
@@ -175,7 +185,17 @@
     "saveRef": "请保存此编号以便后续查询。",
     "backHome": "返回首页",
     "errorTitle": "预订失败",
-    "botCheckNote": "提交前请完成下方安全验证。"
+    "botCheckNote": "提交前请完成下方安全验证。",
+    "datePicker": {
+      "placeholder": "选择入住和退房日期",
+      "selectCheckIn": "请选择入住日期",
+      "selectCheckOut": "请选择退房日期",
+      "apply": "确定",
+      "clear": "清除",
+      "cancel": "取消",
+      "flexExact": "精确日期",
+      "flexDays": "± {n} 天"
+    }
   },
   "footer": {
     "rights": "版权所有",

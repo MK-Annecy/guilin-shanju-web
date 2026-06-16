@@ -24,6 +24,11 @@ const nextConfig: NextConfig = {
 // NOTE: This call also intercepts env loading (dotenvx re-load), which is
 // why NEXT_PUBLIC_TURNSTILE_SITE_KEY is set above via `env` field instead
 // of relying on .env.local.
-initOpenNextCloudflareForDev();
+//
+// `remoteBindings: false` opts out of Wrangler's remote-proxy mode (which
+// would require a CLOUDFLARE_API_TOKEN). Local-only D1 + email stubs are
+// enough for `next dev` and `next build` — the remote EMAIL binding is only
+// used at runtime on the deployed Worker.
+initOpenNextCloudflareForDev({ remoteBindings: false });
 
 export default withNextIntl(nextConfig);

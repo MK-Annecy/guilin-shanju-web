@@ -8,6 +8,8 @@ import { ArrowLeft, Check, AlertCircle, Shield } from 'lucide-react';
 import { submitBookingWithFallback, type BookResult } from '@/app/actions/book';
 import { ROOMS, type RoomId, isRoomId, computeNights } from '@/lib/booking';
 import { Turnstile, type TurnstileHandle } from '@/components/turnstile';
+import { DateRangePicker } from '@/components/date-range-picker';
+import { COUNTRY_CODES, type CountryCode } from '@/lib/country-codes';
 
 const roomImages: Record<RoomId, string> = {
   suite: 'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?q=80&w=1200',
@@ -34,6 +36,7 @@ export default function BookPage() {
     checkOut: tomorrow,
     guests: 2,
     name: '',
+    phoneCountry: '+86' as CountryCode,
     phone: '',
     email: '',
     remarks: '',
@@ -55,7 +58,7 @@ export default function BookPage() {
   }, []);
 
   const nights = Math.max(1, computeNights(form.checkIn, form.checkOut) || 1);
-  const total = room.pricePerNight * nights * form.guests;
+  const total = room.pricePerNight * nights;
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -69,7 +72,7 @@ export default function BookPage() {
         checkOut: form.checkOut,
         guests: form.guests,
         name: form.name,
-        phone: form.phone,
+        phone: `${form.phoneCountry} ${form.phone}`.trim(),
         email: form.email,
         remarks: form.remarks,
         locale: locale === 'zh' ? 'zh' : 'en',
@@ -146,30 +149,34 @@ export default function BookPage() {
           {/* Form */}
           <form onSubmit={submit} className="md:col-span-2 space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div>
+              <div className="md:col-span-2">
                 <label className="text-xs tracking-[0.2em] uppercase text-ink-mute block mb-2">
-                  {t('checkIn')}
+                  {t('checkIn')} — {t('checkOut')}
                 </label>
-                <input
-                  type="date"
-                  required
-                  min={today}
-                  value={form.checkIn}
-                  onChange={(e) => setForm({ ...form, checkIn: e.target.value })}
-                  className="w-full px-4 py-3 bg-cloud-dark border border-line focus:border-moss focus:outline-none"
-                />
-              </div>
-              <div>
-                <label className="text-xs tracking-[0.2em] uppercase text-ink-mute block mb-2">
-                  {t('checkOut')}
-                </label>
-                <input
-                  type="date"
-                  required
-                  min={form.checkIn || today}
-                  value={form.checkOut}
-                  onChange={(e) => setForm({ ...form, checkOut: e.target.value })}
-                  className="w-full px-4 py-3 bg-cloud-dark border border-line focus:border-moss focus:outline-none"
+                <DateRangePicker
+                  checkIn={form.checkIn}
+                  checkOut={form.checkOut}
+                  minDate={today}
+                  onChange={(range) =>
+                    setForm({
+                      ...form,
+                      checkIn: range.checkIn,
+                      checkOut: range.checkOut,
+                    })
+                  }
+                  labels={{
+                    placeholder: t('datePicker.placeholder'),
+                    checkInLabel: t('checkIn'),
+                    checkOutLabel: t('checkOut'),
+                    nights: (n) => `${n} ${t('nights')}`,
+                    apply: t('datePicker.apply'),
+                    clear: t('datePicker.clear'),
+                    cancel: t('datePicker.cancel'),
+                    selectCheckIn: t('datePicker.selectCheckIn'),
+                    selectCheckOut: t('datePicker.selectCheckOut'),
+                    flexExact: t('datePicker.flexExact'),
+                    flexDays: (n) => t('datePicker.flexDays', { n }),
+                  }}
                 />
               </div>
               <div>
@@ -210,14 +217,34 @@ export default function BookPage() {
                 <label className="text-xs tracking-[0.2em] uppercase text-ink-mute block mb-2">
                   {t('phone')}
                 </label>
-                <input
-                  type="tel"
-                  required
-                  value={form.phone}
-                  onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                  placeholder={t('phonePlaceholder')}
-                  className="w-full px-4 py-3 bg-cloud-dark border border-line focus:border-moss focus:outline-none"
-                />
+                <div className="flex">
+                  <select
+                    aria-label={t('phoneCountry')}
+                    value={form.phoneCountry}
+                    onChange={(e) => setForm({ ...form, phoneCountry: e.target.value as CountryCode })}
+                    className="w-[180px] flex-shrink-0 px-3 py-3 bg-cloud-dark border border-r-0 border-line focus:border-moss focus:outline-none text-sm"
+                  >
+                    {[...COUNTRY_CODES]
+                      .sort((a, b) =>
+                        locale === 'zh'
+                          ? a.pinyin.localeCompare(b.pinyin, 'en')
+                          : a.name.localeCompare(b.name, 'en')
+                      )
+                      .map((c) => (
+                        <option key={c.iso} value={c.dial}>
+                          {c.flag} {c.dial}  {locale === 'zh' ? c.nameZh : c.name}
+                        </option>
+                      ))}
+                  </select>
+                  <input
+                    type="tel"
+                    required
+                    value={form.phone}
+                    onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                    placeholder={t('phonePlaceholder')}
+                    className="flex-1 min-w-0 px-4 py-3 bg-cloud-dark border border-line focus:border-moss focus:outline-none"
+                  />
+                </div>
               </div>
               <div>
                 <label className="text-xs tracking-[0.2em] uppercase text-ink-mute block mb-2">
@@ -301,7 +328,7 @@ export default function BookPage() {
                 </div>
                 <div className="flex justify-between">
                   <span>{form.guests} {t('guest')}</span>
-                  <span className="text-ink">×{form.guests}</span>
+                  <span className="text-ink-mute">—</span>
                 </div>
                 <div className="pt-4 mt-4 border-t border-line flex justify-between font-serif text-lg">
                   <span>{t('total')}</span>

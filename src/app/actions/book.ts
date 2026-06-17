@@ -3,6 +3,7 @@
 import { randomBytes } from 'node:crypto';
 import { headers } from 'next/headers';
 import { getCloudflareContext } from '@opennextjs/cloudflare';
+import type { ExecutionContext } from '@cloudflare/workers-types';
 import { getD1 } from '@/lib/d1';
 import { verifyTurnstileToken } from '@/lib/turnstile';
 import { sendBookingConfirmation } from '@/lib/email';
@@ -196,8 +197,18 @@ export async function submitBooking(input: BookInput): Promise<BookResult> {
       }
 
       if (res.success) {
-        // Fire-and-forget: send confirmation email (failures don't block the booking)
-        void sendConfirmationEmail({
+        // Keep the Worker alive long enough for the Resend HTTP send to complete.
+        // `void` fire-and-forget can get killed before the SMTP-equivalent POST finishes,
+        // especially on Cloudflare Workers where the runtime reclaims resources the moment
+        // the Server Action returns. ctx.waitUntil() pins the promise until the fetch settles.
+        let ctx: ExecutionContext | undefined;
+        try {
+          const cf = await getCloudflareContext({ async: true });
+          ctx = cf.ctx as unknown as ExecutionContext | undefined;
+        } catch {
+          // not in OpenNext runtime — fall back to fire-and-forget
+        }
+        const emailPromise = sendConfirmationEmail({
           bookingRef: ref,
           roomId,
           checkIn: input.checkIn,
@@ -210,7 +221,14 @@ export async function submitBooking(input: BookInput): Promise<BookResult> {
           guestEmail: input.email.trim(),
           remarks: input.remarks,
           locale: input.locale,
+        }).catch((err) => {
+          console.error('[book] background email send crashed:', err);
         });
+        if (ctx?.waitUntil) {
+          ctx.waitUntil(emailPromise);
+        } else {
+          void emailPromise;
+        }
         return { ok: true, bookingRef: ref, totalCny, nights };
       }
       ref = generateBookingRef();

@@ -39,8 +39,6 @@ export interface DateRangePickerProps {
     cancel: string;               // e.g. "取消"
     selectCheckIn: string;        // hint when nothing selected, e.g. "请选择入住日期"
     selectCheckOut: string;       // hint after picking check-in, e.g. "请选择退房日期"
-    flexExact: string;            // "精确日期"
-    flexDays: (n: number) => string; // "± 1 天"
   };
 }
 
@@ -469,27 +467,6 @@ export function DateRangePicker({
               {renderMonth(viewYear, viewMonth, true)}
               <div className="hidden md:block w-px bg-line" />
               {renderMonth(rightMonthDate.getFullYear(), rightMonthDate.getMonth(), false)}
-            </div>
-
-            {/* Flexibility pills — visual hint; future enhancement */}
-            <div className="px-4 md:px-6 pb-3 flex items-center gap-2 flex-wrap">
-              <button
-                type="button"
-                className="px-3 py-1.5 text-xs rounded-full bg-moss text-cloud"
-                aria-pressed="true"
-              >
-                {labels.flexExact}
-              </button>
-              {[1, 2, 3, 7].map((n) => (
-                <button
-                  key={n}
-                  type="button"
-                  className="px-3 py-1.5 text-xs rounded-full border border-line text-ink-soft hover:border-moss hover:text-moss transition-colors"
-                  aria-pressed="false"
-                >
-                  {labels.flexDays(n)}
-                </button>
-              ))}
             </div>
 
             {/* Summary + actions */}

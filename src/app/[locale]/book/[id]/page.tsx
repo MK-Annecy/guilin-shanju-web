@@ -174,8 +174,6 @@ export default function BookPage() {
                     cancel: t('datePicker.cancel'),
                     selectCheckIn: t('datePicker.selectCheckIn'),
                     selectCheckOut: t('datePicker.selectCheckOut'),
-                    flexExact: t('datePicker.flexExact'),
-                    flexDays: (n) => t('datePicker.flexDays', { n }),
                   }}
                 />
               </div>

@@ -192,9 +192,7 @@
       "selectCheckOut": "请选择退房日期",
       "apply": "确定",
       "clear": "清除",
-      "cancel": "取消",
-      "flexExact": "精确日期",
-      "flexDays": "± {n} 天"
+      "cancel": "取消"
     }
   },
   "footer": {

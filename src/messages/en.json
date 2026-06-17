@@ -192,9 +192,7 @@
       "selectCheckOut": "Select check-out date",
       "apply": "Apply",
       "clear": "Clear",
-      "cancel": "Cancel",
-      "flexExact": "Exact dates",
-      "flexDays": "± {n} days"
+      "cancel": "Cancel"
     }
   },
   "footer": {

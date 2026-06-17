@@ -30,8 +30,8 @@ async function loadRecentBookings(): Promise<BookingRow[]> {
                 total_cny, guest_name, guest_email, guest_phone, status,
                 locale, created_at
            FROM bookings
-          ORDER BY id DESC
-          LIMIT 50`,
+          ORDER BY check_in ASC, id ASC
+          LIMIT 100`,
       )
       .all<BookingRow>();
     return results ?? [];
@@ -40,16 +40,33 @@ async function loadRecentBookings(): Promise<BookingRow[]> {
   }
 }
 
-const STATUS_LABEL: Record<string, string> = {
-  pending: '待处理',
-  confirmed: '已确认',
+/**
+ * 状态显示文案。
+ * 当前：付款功能未上线，所有状态统一显示为「待付款」。
+ * 付款上线后改回按 DB status 返回对应文案。
+ */
+const STATUS_LABELS: Record<string, string> = {
+  pending: '待付款',
+  paid: '待入住',
+  checked_in: '已入住',
+  checked_out: '已退房',
   cancelled: '已取消',
+  refunded: '已退款',
 };
 
+function getStatusLabel(_dbStatus: string): string {
+  // TODO(付款功能): 取消下面这行，启用 STATUS_LABELS 查找
+  return '待付款';
+  // return STATUS_LABELS[_dbStatus] ?? '待付款';
+}
+
 const STATUS_CLASS: Record<string, string> = {
-  pending: 'text-amber-700 border-amber-300',
-  confirmed: 'text-moss border-moss',
-  cancelled: 'text-ink-mute border-line',
+  待付款: 'text-amber-700 border-amber-300',
+  待入住: 'text-moss border-moss',
+  已入住: 'text-moss-dark border-moss-dark',
+  已退房: 'text-ink-mute border-line',
+  已取消: 'text-ink-mute border-line line-through',
+  已退款: 'text-ink-mute border-line line-through',
 };
 
 export default async function BookingsPage() {
@@ -60,9 +77,9 @@ export default async function BookingsPage() {
     <div className="space-y-6">
       <header className="flex items-end justify-between">
         <div>
-          <h1 className="font-serif text-3xl text-ink mb-2">订单管理</h1>
+          <h1 className="font-serif text-3xl text-ink mb-2">客房订单管理</h1>
           <p className="text-sm text-ink-mute">
-            最近 50 条预订。确认、取消、详情等操作下一步开放。
+            按入住时间升序排列（早入住在前）。确认、取消、详情等操作下一步开放。
           </p>
         </div>
         <div className="text-xs text-ink-mute">
@@ -105,7 +122,7 @@ export default async function BookingsPage() {
                   </td>
                   <td className="px-4 py-3 text-xs">
                     <div>{b.check_in}</div>
-                    <div className="text-ink-mute">→ {b.check_out}</div>
+                    <div className="text-ink-mute">{b.check_out}</div>
                     <div className="text-ink-mute">{b.nights} 晚 / {b.guests} 人</div>
                   </td>
                   <td className="px-4 py-3">
@@ -117,14 +134,19 @@ export default async function BookingsPage() {
                     ¥{b.total_cny.toLocaleString()}
                   </td>
                   <td className="px-4 py-3">
-                    <span
-                      className={[
-                        'inline-block px-2 py-0.5 text-xs border',
-                        STATUS_CLASS[b.status] ?? 'border-line text-ink-mute',
-                      ].join(' ')}
-                    >
-                      {STATUS_LABEL[b.status] ?? b.status}
-                    </span>
+                    {(() => {
+                      const label = getStatusLabel(b.status);
+                      return (
+                        <span
+                          className={[
+                            'inline-block px-2 py-0.5 text-xs border',
+                            STATUS_CLASS[label] ?? 'border-line text-ink-mute',
+                          ].join(' ')}
+                        >
+                          {label}
+                        </span>
+                      );
+                    })()}
                   </td>
                   <td className="px-4 py-3 text-xs text-ink-mute">
                     {(b.created_at ?? '').replace('T', ' ').slice(0, 16)}

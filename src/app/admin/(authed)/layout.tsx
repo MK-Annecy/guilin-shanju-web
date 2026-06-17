@@ -13,7 +13,7 @@ const NAV_ITEMS: Array<{
   status: 'ready' | 'soon';
 }> = [
   { href: '/admin', label: '概览', description: 'Dashboard', status: 'ready' },
-  { href: '/admin/bookings', label: '订单管理', description: 'Bookings', status: 'ready' },
+  { href: '/admin/bookings', label: '客房订单管理', description: 'Bookings', status: 'ready' },
   { href: '/admin/rooms', label: '房间维护', description: 'Rooms', status: 'soon' },
   { href: '/admin/pricing', label: '房价维护', description: 'Pricing', status: 'soon' },
   { href: '/admin/policies', label: '预订与取消政策', description: 'Policies', status: 'soon' },

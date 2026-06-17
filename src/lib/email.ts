@@ -1,8 +1,18 @@
-// Email service — Resend (https://resend.com)
-// Auth via RESEND_API_KEY secret (set in Cloudflare Workers dashboard or wrangler secret put).
-// Sender domain (forestretreat.cn) must be verified in Resend dashboard first.
+// Email service — Cloudflare Email Service (Beta, launched 2025-09-26).
+// Bound via wrangler.jsonc `send_email: [{ "name": "EMAIL", "remote": true }]`.
+// Domain (forestretreat.cn) must be on Cloudflare DNS — SPF/DKIM/DMARC auto-managed.
+// Pricing: Workers Paid ($5/mo) + $0.35 / 1000 emails.
+//
+// IMPORTANT (per project decision 2026-06-16):
+// - From MUST stay "Booking <noreply@forestretreat.cn>". Do NOT change to a
+//   sub-domain like send@ — the "由 cf-bounce.forestretreat.cn 代发" hint
+//   shown by 126 mail is a client-side styling choice, not an SPF/DKIM issue.
+// - The platform MUST stay Cloudflare Email Service (not Resend/Mailgun/MailChannels).
+//
+// API shape (Workers binding, NOT the REST API which uses {address, name}):
+//   env.EMAIL.send({ to, from, cc, replyTo, subject, html, text })
 
-const RESEND_API_URL = 'https://api.resend.com/emails';
+import type { SendEmail, EmailAddress } from '@cloudflare/workers-types';
 
 export interface BookingEmailInput {
   bookingRef: string;
@@ -22,7 +32,7 @@ export interface BookingEmailInput {
 
 export interface SendResult {
   ok: boolean;
-  id?: string;
+  /** Cloudflare returns `{ success: true }` on accept; no message id in Workers API */
   error?: string;
 }
 
@@ -38,56 +48,52 @@ const ROOM_NAME_ZH: Record<string, string> = {
 };
 
 /**
- * Send the booking confirmation email to the guest.
- * Also CCs the hotel mailbox so the team has a copy.
- * Fire-and-forget at the call site; this function never throws.
+ * Parse a "Name <addr@host>" string into an EmailAddress.
+ * Falls back to bare email if no angle-bracket name present.
+ */
+function parseAddress(s: string, defaultName?: string): EmailAddress {
+  const m = s.match(/^\s*([^<]*?)\s*<\s*([^>]+?)\s*>\s*$/);
+  if (m) {
+    const name = m[1].trim().replace(/^"|"$/g, '');
+    return { email: m[2].trim(), name: name || (defaultName ?? '') };
+  }
+  return { email: s.trim(), name: defaultName ?? '' };
+}
+
+/**
+ * Send the booking confirmation email via Cloudflare Email Service.
+ * Returns { ok: true } when Cloudflare accepts the message; never throws.
  */
 export async function sendBookingConfirmation(
   input: BookingEmailInput,
-  resendApiKey: string,
+  emailBinding: SendEmail,
   fromAddress: string,
   hotelInbox: string,
 ): Promise<SendResult> {
-  if (!resendApiKey) {
-    return { ok: false, error: 'RESEND_API_KEY not configured' };
-  }
-
   const { subject, html, text } = input.locale === 'zh'
     ? buildZh(input)
     : buildEn(input);
 
-  try {
-    const resp = await fetch(RESEND_API_URL, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${resendApiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        from: fromAddress,                 // e.g. "归林山居 <booking@forestretreat.cn>"
-        to: [input.guestEmail],
-        cc: [hotelInbox],                  // team copy
-        reply_to: hotelInbox,              // guest reply goes to team
-        subject,
-        html,
-        text,
-        tags: [
-          { name: 'category', value: 'booking-confirmation' },
-          { name: 'booking_ref', value: input.bookingRef },
-        ],
-      }),
-    });
+  const from = parseAddress(fromAddress, 'Booking');
+  const replyTo = parseAddress(hotelInbox, '归林山居');
 
-    if (!resp.ok) {
-      const errText = await resp.text();
-      console.error('Resend API error:', resp.status, errText);
-      return { ok: false, error: `Resend API ${resp.status}: ${errText.slice(0, 200)}` };
-    }
-    const data = (await resp.json()) as { id?: string };
-    return { ok: true, id: data.id };
+  try {
+    await emailBinding.send({
+      to: { email: input.guestEmail, name: input.guestName },
+      from,
+      cc: [{ email: hotelInbox, name: '归林山居' }],
+      replyTo,
+      subject,
+      html,
+      text,
+    });
+    return { ok: true };
   } catch (err) {
-    console.error('sendBookingConfirmation failed:', err);
-    return { ok: false, error: err instanceof Error ? err.message : 'unknown' };
+    console.error('[email] Cloudflare Email Service send failed:', err);
+    return {
+      ok: false,
+      error: err instanceof Error ? err.message : 'unknown',
+    };
   }
 }
 
@@ -182,19 +188,19 @@ function buildEn(input: BookingEmailInput) {
   const html = `<!DOCTYPE html><html><head><meta charset="utf-8"></head>
 <body style="font-family:Georgia,'Times New Roman',serif;max-width:560px;margin:0 auto;padding:24px;color:#3F3F3F;line-height:1.7;background:#F5F5F0;">
   <div style="text-align:center;padding:24px 0;border-bottom:1px solid #D8D8D0;">
-    <div style="font-size:28px;color:#3F5640;letter-spacing:0.05em;">Gui Lin Shan Ju</div>
-    <div style="font-size:12px;color:#8B6F47;letter-spacing:0.3em;text-transform:uppercase;margin-top:4px;">A MOUNTAIN SANCTUARY</div>
+    <div style="font-family:Georgia,serif;font-size:28px;color:#3F5640;letter-spacing:0.05em;">Gui Lin Shan Ju</div>
+    <div style="font-size:12px;color:#8B6F47;letter-spacing:0.3em;text-transform:uppercase;margin-top:4px;">RETURN TO THE FOREST</div>
   </div>
   <div style="padding:32px 0;">
-    <p style="font-size:16px;">Hello ${escapeHtml(input.guestName)},</p>
-    <p>Thank you for your booking request. Your reference:</p>
+    <p style="font-size:16px;">Hello ${input.guestName},</p>
+    <p>We've received your booking request. Reference:</p>
     <div style="text-align:center;margin:24px 0;padding:16px;background:#fff;border:1px solid #D8D8D0;">
       <div style="font-size:12px;letter-spacing:0.3em;text-transform:uppercase;color:#6A6A6A;margin-bottom:6px;">BOOKING REFERENCE</div>
       <div style="font-family:Menlo,Consolas,monospace;font-size:22px;color:#3F5640;letter-spacing:0.1em;">${input.bookingRef}</div>
     </div>
-    <h3 style="color:#3F5640;border-bottom:1px solid #D8D8D0;padding-bottom:8px;margin-top:32px;">Booking Details</h3>
+    <h3 style="font-family:Georgia,serif;color:#3F5640;border-bottom:1px solid #D8D8D0;padding-bottom:8px;margin-top:32px;">Booking Details</h3>
     <table style="width:100%;border-collapse:collapse;font-size:15px;">
-      <tr><td style="padding:8px 0;color:#6A6A6A;width:35%;">Room</td><td style="padding:8px 0;">${roomName}</td></tr>
+      <tr><td style="padding:8px 0;color:#6A6A6A;width:30%;">Room</td><td style="padding:8px 0;color:#3F3F3F;">${roomName}</td></tr>
       <tr><td style="padding:8px 0;color:#6A6A6A;">Check-in</td><td style="padding:8px 0;">${input.checkIn}</td></tr>
       <tr><td style="padding:8px 0;color:#6A6A6A;">Check-out</td><td style="padding:8px 0;">${input.checkOut}</td></tr>
       <tr><td style="padding:8px 0;color:#6A6A6A;">Nights</td><td style="padding:8px 0;">${input.nights}</td></tr>
@@ -204,13 +210,13 @@ function buildEn(input: BookingEmailInput) {
     </table>
     <div style="margin-top:24px;padding:16px;background:#5C7A5C;color:#F5F5F0;text-align:center;">
       <div style="font-size:13px;letter-spacing:0.2em;">TOTAL</div>
-      <div style="font-size:32px;margin-top:6px;">¥${input.totalCny.toLocaleString()}</div>
+      <div style="font-family:Georgia,serif;font-size:32px;margin-top:6px;">¥${input.totalCny.toLocaleString()}</div>
     </div>
-    <p style="margin-top:32px;">We'll contact you within 24 hours by phone or email to confirm your booking.</p>
+    <p style="margin-top:32px;">We'll contact you within 24 hours by phone or email to confirm.</p>
     <p>For any questions, reply to this email or call <strong>+86-191 1623 6513</strong>.</p>
   </div>
   <div style="border-top:1px solid #D8D8D0;padding:24px 0;font-size:12px;color:#8B6F47;text-align:center;">
-    <div>Gui Lin Shan Ju · A Mountain Sanctuary in Pu'er</div>
+    <div>Gui Lin Shan Ju · 归林山居</div>
     <div style="margin-top:4px;">service@forestretreat.cn · https://forestretreat.cn</div>
   </div>
 </body></html>`;

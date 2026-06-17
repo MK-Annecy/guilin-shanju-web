@@ -3,7 +3,7 @@
 import { randomBytes } from 'node:crypto';
 import { headers } from 'next/headers';
 import { getCloudflareContext } from '@opennextjs/cloudflare';
-import type { ExecutionContext } from '@cloudflare/workers-types';
+import type { ExecutionContext, SendEmail } from '@cloudflare/workers-types';
 import { getD1 } from '@/lib/d1';
 import { verifyTurnstileToken } from '@/lib/turnstile';
 import { sendBookingConfirmation } from '@/lib/email';
@@ -242,8 +242,13 @@ export async function submitBooking(input: BookInput): Promise<BookResult> {
 }
 
 /**
- * Fire-and-forget email sender. Reads RESEND_API_KEY + NOTIFY_EMAIL
+ * Fire-and-forget email sender. Reads EMAIL_FROM + HOTEL_INBOX + env.EMAIL binding
  * from Cloudflare env. If missing, logs and returns silently.
+ *
+ * Uses Cloudflare Email Service (Beta, 2025-09-26) via the Workers binding API:
+ *   env.EMAIL.send({ to, from, cc, replyTo, subject, html, text })
+ *
+ * NOT Resend, NOT MailChannels, NOT SMTP.
  */
 async function sendConfirmationEmail(details: {
   bookingRef: string;
@@ -259,19 +264,23 @@ async function sendConfirmationEmail(details: {
   remarks?: string;
   locale: 'zh' | 'en';
 }): Promise<void> {
-  let apiKey: string | undefined;
   let fromAddress: string | undefined;
   let hotelInbox: string | undefined;
+  let emailBinding: SendEmail | undefined;
   try {
     const { env } = await getCloudflareContext({ async: true });
-    apiKey = env.RESEND_API_KEY;
     fromAddress = env.EMAIL_FROM;
     hotelInbox = env.HOTEL_INBOX;
+    emailBinding = env.EMAIL;
   } catch {
     // not in OpenNext runtime — skip
   }
-  if (!apiKey || !fromAddress || !hotelInbox) {
-    console.warn('[email] skipped: RESEND_API_KEY / EMAIL_FROM / HOTEL_INBOX not set');
+  if (!fromAddress || !hotelInbox) {
+    console.warn('[email] skipped: EMAIL_FROM / HOTEL_INBOX not set');
+    return;
+  }
+  if (!emailBinding) {
+    console.warn('[email] skipped: EMAIL binding not available (wrangler send_email not configured?)');
     return;
   }
   const result = await sendBookingConfirmation(
@@ -290,14 +299,14 @@ async function sendConfirmationEmail(details: {
       remarks: details.remarks,
       locale: details.locale,
     },
-    apiKey,
+    emailBinding,
     fromAddress,
     hotelInbox,
   );
   if (!result.ok) {
     console.error('[email] send failed:', result.error);
   } else {
-    console.log('[email] sent:', result.id, 'for', details.bookingRef);
+    console.log('[email] sent OK for', details.bookingRef);
   }
 }
 

@@ -11,7 +11,9 @@ interface __BaseEnv_CloudflareEnv {
 	NEXTJS_ENV: string;
 	/** Cloudflare Turnstile server-side secret (set via `wrangler secret put`) */
 	TURNSTILE_SECRET_KEY?: string;
-	/** @deprecated — Resend path removed; remove from `wrangler secret list` soon */
+	/** Admin session HMAC secret (set via `wrangler secret put`) */
+	ADMIN_SESSION_SECRET?: string;
+	/** @deprecated — Resend path removed; secret already deleted from Workers */
 	RESEND_API_KEY?: string;
 }
 declare namespace Cloudflare {

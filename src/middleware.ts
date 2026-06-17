@@ -46,14 +46,22 @@ export default function middleware(request: NextRequest) {
     return NextResponse.redirect(url, 301);
   }
 
-  // 2) 仅在根路径做浏览器语言自动检测
+  const pathname = request.nextUrl.pathname;
+
+  // 2) /admin/* 不走 i18n — 管理后台 locale-independent
+  //    Auth check happens in src/app/admin/(authed)/layout.tsx (server component).
+  if (pathname === '/admin' || pathname.startsWith('/admin/')) {
+    return NextResponse.next();
+  }
+
+  // 3) 仅在根路径做浏览器语言自动检测
   //    /zh/*、/en/* 走 next-intl，不在此拦截（用户已明确选过语言）
-  if (request.nextUrl.pathname === '/') {
+  if (pathname === '/') {
     const locale = detectLocale(request);
     return NextResponse.redirect(new URL(`/${locale}`, request.url));
   }
 
-  // 3) 其他路径交给 next-intl 处理 i18n
+  // 4) 其他路径交给 next-intl 处理 i18n
   return intlMiddleware(request);
 }
 
